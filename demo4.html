@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>🏭 IRPC Shift Schedule</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="#"><!-- fix favicon.ico -->
+	
+</head>
+<body class="bg-slate-50 min-h-screen p-6">
+	<div class="w-full mx-auto px-4">
+		<header class="mb-4 bg-indigo-700 text-white rounded-lg px-4 py-2 md:py-3 shadow relative">
+			<div class="flex items-center justify-between">
+					<span class="header-wa-icon" role="img" aria-label="โรงงาน">🏭</span>
+					<h1 class="text-2xl font-bold text-white">IRPC Shift Schedule
+						<span class="gear-group" aria-hidden="true">
+							<span class="gear-inline gear-a gear-wrap" aria-hidden="true">
+								<i class="fas fa-cog spin-gear" aria-hidden="true"></i>
+							</span>
+							<span class="gear-inline gear-b gear-wrap" aria-hidden="true">
+								<i class="fas fa-cog spin-gear" aria-hidden="true"></i>
+							</span>
+							<span class="gear-inline gear-c gear-wrap" aria-hidden="true">
+								<i class="fas fa-cog spin-gear" aria-hidden="true"></i>
+							</span>
+						</span>
+					</h1>
+				<div class="flex items-center gap-2 header-controls">
+					<div id="deviceInfo" class="text-xs text-indigo-100 bg-indigo-800/30 px-2 py-1 rounded hidden sm:inline-block" title="Device info"></div>
+					<button id="prevBtn" class="px-3 py-2 bg-indigo-600 text-white rounded flex items-center gap-2 relative shadow-sm hover:bg-indigo-500 transition">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+						</svg>
+						<span class="hidden sm:inline">Prev</span>
+					</button>
+					<div class="px-4 py-2 bg-indigo-600 text-white rounded shadow text-center">
+						<div id="monthDisplay" class="font-bold"></div>
+						<div id="yearDisplay" class="text-xs text-indigo-200"></div>
+					</div>
+					<button id="nextBtn" class="px-3 py-2 bg-indigo-600 text-white rounded flex items-center gap-2 relative shadow-sm hover:bg-indigo-500 transition">
+						<span class="hidden sm:inline">Next</span>
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+						</svg>
+					</button>
+				</div>
+			</div>
+		</header>
+
+		<div class="mb-3">
+			<div class="flex items-center gap-2">
+					<button id="todayJump" class="px-3 py-2 bg-blue-600 text-white rounded">วันนี้</button>
+					<div id="dateDisplay" class="bg-white px-3 py-2 rounded ml-2 relative">
+						<label for="dateJump" class="sr-only">เลือกวันที่</label>
+						<input id="dateJump" type="date" class="opacity-0 absolute inset-0 w-full h-full" aria-label="เลือกวันที่" title="เลือกวันที่" />
+					</div>
+					<button id="toggleSnake" class="rounded-full px-3 py-1.5 bg-green-600 text-white">Snake: ON</button>
+				</div>
+				<!-- Legend Indicator -->
+                <div class="flex flex-wrap justify-center gap-2">
+                    <div class="flex items-center gap-1.5 shift-m px-3 py-1 rounded-full border border-yellow-200 shadow-sm text-[9px] md:text-xs font-semibold">
+                        <span class="w-2 h-2 bg-yellow-600 rounded-full"></span><span>M: เช้า</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shift-e px-3 py-1 rounded-full border border-orange-200 shadow-sm text-[9px] md:text-xs font-semibold">
+                        <span class="w-2 h-2 bg-orange-700 rounded-full"></span><span>E: บ่าย</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shift-n px-3 py-1 rounded-full border border-slate-700 shadow-sm text-[9px] md:text-xs font-semibold">
+                        <span class="w-2 h-2 bg-slate-300 rounded-full"></span><span>N: ดึก</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shift-o px-3 py-1 rounded-full border border-gray-200 shadow-sm text-[9px] md:text-xs font-semibold">
+                        <span class="w-2 h-2 bg-gray-400 rounded-full"></span><span>O: OFF</span>
+                    </div>
+                </div>
+		</div>
+
+		<div class="table-render-wrap">
+			<div id="tableContainer" class="overflow-x-auto bg-white rounded-lg shadow">
+				<table class="w-full text-center">
+				<thead>
+					<tr class="bg-slate-100">
+						<th class="p-4 text-left min-w-[120px] sticky left-0 bg-white z-20">ทีม / วันที่</th>
+						<th class="p-0">
+							<div id="datesContainer" class="flex min-w-max"></div>
+						</th>
+					</tr>
+				</thead>
+				<tbody id="calendarBody"></tbody>
+				</table>
+			</div>
+		</div>
+
+		<footer class="mt-4 text-sm text-gray-600">
+			<div class="flex justify-end items-center">
+				<div class="text-right">
+					<div class="flex flex-wrap gap-x-4 gap-y-1">
+						<span><strong>กะเช้า (M) :</strong> 06:00-14:00</span>
+						<span><strong>กะบ่าย (E) :</strong> 14:00-22:00</span>
+						<span><strong>กะดึก (N) :</strong> 22:00-06:00 (ข้ามวัน)</span>
+					</div>
+					<div class="mt-1 text-xs text-gray-400">Updated: <span id="updateTime"></span></div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<script src="index.js" defer></script>
+	<script src="main.js" defer></script>
+</body>
+</html>
+
